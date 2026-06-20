@@ -9,6 +9,7 @@ export default function ProfilePage() {
   const [page, setPage] = useState(1);
   const [editName, setEditName] = useState('');
   const [editing, setEditing] = useState(false);
+  const [activeTrackId, setActiveTrackId] = useState(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
@@ -116,6 +117,8 @@ export default function ProfilePage() {
                   key={item.download_id}
                   track={{ ...item, id: item.track_id }}
                   showDownloadedAt
+                  activeTrackId={activeTrackId}
+                  onPlay={setActiveTrackId}
                 />
               ))}
             </div>

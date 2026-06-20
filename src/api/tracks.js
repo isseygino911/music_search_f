@@ -44,6 +44,16 @@ export async function bulkDeleteTracks(ids) {
   return data;
 }
 
+export async function getStreamUrl(trackId) {
+  const { data } = await axios.get(`/api/tracks/${trackId}/stream`);
+  return data.url;
+}
+
+export async function updateTrack(id, { title, artist, genre, description }) {
+  const { data } = await axios.put(`/api/tracks/${id}`, { title, artist, genre, description });
+  return data;
+}
+
 // Opens the download URL in the current tab — browser follows the S3 redirect
 export function downloadTrack(trackId) {
   window.location.href = `/api/tracks/${trackId}/download`;

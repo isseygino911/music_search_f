@@ -7,8 +7,8 @@ export default function SearchPage() {
   const [tracks, setTracks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [activeTrackId, setActiveTrackId] = useState(null);
 
-  // Load all tracks on first render
   useEffect(() => {
     getAllTracks()
       .then(setTracks)
@@ -43,7 +43,12 @@ export default function SearchPage() {
 
       <div className="track-list">
         {tracks.map((track) => (
-          <TrackCard key={track.id} track={track} />
+          <TrackCard
+            key={track.id}
+            track={track}
+            activeTrackId={activeTrackId}
+            onPlay={setActiveTrackId}
+          />
         ))}
       </div>
     </div>
