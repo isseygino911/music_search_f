@@ -1,19 +1,20 @@
 import axios from 'axios';
+import { BASE_URL } from './config';
 
 export async function getAllTracks() {
-  const { data } = await axios.get('/api/tracks');
+  const { data } = await axios.get(`${BASE_URL}/api/tracks`);
   return data;
 }
 
 export async function searchTracks(q, genre, artist) {
-  const { data } = await axios.get('/api/tracks/search', {
+  const { data } = await axios.get(`${BASE_URL}/api/tracks/search`, {
     params: { q, genre, artist },
   });
   return data;
 }
 
 export async function uploadTrack(formData, onProgress) {
-  const { data } = await axios.post('/api/tracks', formData, {
+  const { data } = await axios.post(`${BASE_URL}/api/tracks`, formData, {
     onUploadProgress(event) {
       if (onProgress && event.total) {
         onProgress(Math.round((event.loaded * 100) / event.total));
@@ -25,7 +26,7 @@ export async function uploadTrack(formData, onProgress) {
 
 export async function bulkUploadTracks(formData, onProgress, onDone) {
   const token = localStorage.getItem('token');
-  const response = await fetch('/api/tracks/bulk', {
+  const response = await fetch(`${BASE_URL}/api/tracks/bulk`, {
     method: 'POST',
     headers: { Authorization: `Bearer ${token}` },
     body: formData,
@@ -65,26 +66,26 @@ export async function bulkUploadTracks(formData, onProgress, onDone) {
 }
 
 export async function deleteTrack(id) {
-  const { data } = await axios.delete(`/api/tracks/${id}`);
+  const { data } = await axios.delete(`${BASE_URL}/api/tracks/${id}`);
   return data;
 }
 
 export async function bulkDeleteTracks(ids) {
-  const { data } = await axios.delete('/api/tracks', { data: { ids } });
+  const { data } = await axios.delete(`${BASE_URL}/api/tracks`, { data: { ids } });
   return data;
 }
 
 export async function getStreamUrl(trackId) {
-  const { data } = await axios.get(`/api/tracks/${trackId}/stream`);
+  const { data } = await axios.get(`${BASE_URL}/api/tracks/${trackId}/stream`);
   return data.url;
 }
 
 export async function updateTrack(id, { title, artist, genre, description }) {
-  const { data } = await axios.put(`/api/tracks/${id}`, { title, artist, genre, description });
+  const { data } = await axios.put(`${BASE_URL}/api/tracks/${id}`, { title, artist, genre, description });
   return data;
 }
 
 export async function downloadTrack(trackId) {
-  const { data } = await axios.get(`/api/tracks/${trackId}/download-url`);
+  const { data } = await axios.get(`${BASE_URL}/api/tracks/${trackId}/download-url`);
   window.location.href = data.url;
 }
