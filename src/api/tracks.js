@@ -23,15 +23,45 @@ export async function uploadTrack(formData, onProgress) {
   return data;
 }
 
-export async function bulkUploadTracks(formData, onProgress) {
-  const { data } = await axios.post('/api/tracks/bulk', formData, {
-    onUploadProgress(event) {
-      if (onProgress && event.total) {
-        onProgress(Math.round((event.loaded * 100) / event.total));
-      }
-    },
+export async function bulkUploadTracks(formData, onProgress, onDone) {
+  const token = localStorage.getItem('token');
+  const response = await fetch('/api/tracks/bulk', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${token}` },
+    body: formData,
   });
-  return data;
+
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({ error: 'Upload failed' }));
+    throw new Error(err.error || 'Upload failed');
+  }
+
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = '';
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+
+    const lines = buffer.split('\n');
+    buffer = lines.pop();
+
+    let eventType = null;
+    for (const line of lines) {
+      if (line.startsWith('event: ')) {
+        eventType = line.slice(7).trim();
+      } else if (line.startsWith('data: ')) {
+        try {
+          const data = JSON.parse(line.slice(6));
+          if (eventType === 'progress' && onProgress) onProgress(data);
+          if (eventType === 'done' && onDone) onDone(data);
+        } catch {}
+        eventType = null;
+      }
+    }
+  }
 }
 
 export async function deleteTrack(id) {
@@ -54,7 +84,7 @@ export async function updateTrack(id, { title, artist, genre, description }) {
   return data;
 }
 
-// Opens the download URL in the current tab — browser follows the S3 redirect
-export function downloadTrack(trackId) {
-  window.location.href = `/api/tracks/${trackId}/download`;
+export async function downloadTrack(trackId) {
+  const { data } = await axios.get(`/api/tracks/${trackId}/download-url`);
+  window.location.href = data.url;
 }

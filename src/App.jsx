@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Link, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
+import SpectrumBackground from './components/SpectrumBackground';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import SearchPage from './pages/SearchPage';
@@ -36,6 +37,7 @@ function Navbar() {
 function AppRoutes() {
   return (
     <>
+      <SpectrumBackground />
       <Navbar />
       <main className="main-content">
         <Routes>

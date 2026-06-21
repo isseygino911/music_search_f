@@ -33,7 +33,7 @@ export default function RegisterPage() {
 
   return (
     <div className="auth-page">
-      <div className="auth-card">
+      <div className="auth-card auth-card--glass">
         <h1>Create Account</h1>
         <form onSubmit={handleSubmit}>
           <div className="form-group">

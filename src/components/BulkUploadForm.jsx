@@ -7,6 +7,7 @@ export default function BulkUploadForm({ onUploaded }) {
   const [description, setDescription] = useState('');
   const [files, setFiles] = useState([]);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [processedCount, setProcessedCount] = useState(0);
   const [status, setStatus] = useState('idle'); // idle | uploading | done | error
   const [results, setResults] = useState([]);
   const [errorMsg, setErrorMsg] = useState('');
@@ -29,27 +30,37 @@ export default function BulkUploadForm({ onUploaded }) {
 
     setStatus('uploading');
     setUploadProgress(0);
+    setProcessedCount(0);
     setErrorMsg('');
     setResults([]);
 
+    const liveResults = [];
+
     try {
-      const response = await bulkUploadTracks(formData, setUploadProgress);
-      setResults(response.results);
-      setStatus('done');
-
-      // Notify parent of successfully uploaded tracks
-      const uploaded = response.results.filter((r) => r.success).map((r) => r.track);
-      if (onUploaded && uploaded.length > 0) onUploaded(uploaded);
-
-      // Reset form
-      setArtist('');
-      setGenre('');
-      setDescription('');
-      setFiles([]);
-      setUploadProgress(0);
+      await bulkUploadTracks(
+        formData,
+        ({ index, total, filename, success, error }) => {
+          setProcessedCount(index);
+          setUploadProgress(Math.round((index / total) * 100));
+          liveResults.push({ filename, success, error });
+          setResults([...liveResults]);
+        },
+        ({ results: finalResults }) => {
+          setResults(finalResults);
+          setStatus('done');
+          const uploadedTracks = finalResults.filter((r) => r.success).map((r) => r.track);
+          if (onUploaded && uploadedTracks.length > 0) onUploaded(uploadedTracks);
+          setArtist('');
+          setGenre('');
+          setDescription('');
+          setFiles([]);
+          setUploadProgress(0);
+          setProcessedCount(0);
+        }
+      );
     } catch (err) {
       setStatus('error');
-      setErrorMsg(err.response?.data?.error || 'Bulk upload failed');
+      setErrorMsg(err.message || 'Bulk upload failed');
     }
   }
 
@@ -120,18 +131,20 @@ export default function BulkUploadForm({ onUploaded }) {
         </ul>
       )}
 
-      {/* Upload progress bar */}
+      {/* Upload progress bar — real-time per-file via SSE */}
       {status === 'uploading' && (
         <div className="progress-wrapper">
           <div className="progress-track">
             <div className="progress-bar" style={{ width: `${uploadProgress}%` }} />
           </div>
-          <p className="progress-label">Uploading... {uploadProgress}%</p>
+          <p className="progress-label">
+            {processedCount} of {files.length} processed — {uploadProgress}%
+          </p>
         </div>
       )}
 
-      {/* Per-file results */}
-      {status === 'done' && results.length > 0 && (
+      {/* Live per-file results — shown during upload AND after done */}
+      {(status === 'uploading' || status === 'done') && results.length > 0 && (
         <div className="bulk-results">
           <p className="bulk-summary">
             {successCount > 0 && <span className="success-count">{successCount} uploaded</span>}
@@ -157,7 +170,9 @@ export default function BulkUploadForm({ onUploaded }) {
         className="btn btn-primary"
         disabled={status === 'uploading' || files.length === 0 || !artist}
       >
-        {status === 'uploading' ? `Uploading ${files.length} files...` : `Upload ${files.length || ''} Files`}
+        {status === 'uploading'
+          ? `Processing file ${processedCount + 1} of ${files.length}...`
+          : `Upload ${files.length || ''} Files`}
       </button>
     </form>
   );
