@@ -1174,3 +1174,67 @@ body {
   border-radius: 6px;
   border: 1px solid rgba(74, 222, 128, 0.25);
 }
+
+/* ── Video Match ────────────────────────────────────────────────────────── */
+
+.match-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 8px 0;
+}
+
+.match-step {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.35);
+  transition: color 0.2s;
+}
+
+.match-step--active {
+  color: #60b8ff;
+}
+
+.match-step--done {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.match-step-icon {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1.5px solid currentColor;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.match-step--done .match-step-icon {
+  background: rgba(74, 222, 128, 0.15);
+  border-color: #4ade80;
+  color: #4ade80;
+}
+
+.match-result-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.match-score-badge {
+  font-size: 11px;
+  font-weight: 600;
+  color: #60b8ff;
+  padding: 2px 8px;
+  background: rgba(96, 184, 255, 0.12);
+  border: 1px solid rgba(96, 184, 255, 0.25);
+  border-radius: 20px;
+  align-self: flex-start;
+  margin-left: 4px;
+}
+
+/* ── End Video Match ────────────────────────────────────────────────────── */

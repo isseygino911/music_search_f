@@ -7,6 +7,7 @@ import RegisterPage from './pages/RegisterPage';
 import SearchPage from './pages/SearchPage';
 import AdminPage from './pages/AdminPage';
 import ProfilePage from './pages/ProfilePage';
+import MatchPage from './pages/MatchPage';
 import './App.css';
 
 function Navbar() {
@@ -19,6 +20,7 @@ function Navbar() {
         {user ? (
           <>
             <Link to="/">Search</Link>
+            <Link to="/match">Match</Link>
             {user.role === 'admin' && <Link to="/admin">Upload</Link>}
             <Link to="/profile">Profile</Link>
             <button className="btn-link" onClick={logout}>Sign Out</button>
@@ -54,6 +56,10 @@ function AppRoutes() {
           <Route
             path="/profile"
             element={<ProtectedRoute><ProfilePage /></ProtectedRoute>}
+          />
+          <Route
+            path="/match"
+            element={<ProtectedRoute><MatchPage /></ProtectedRoute>}
           />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

@@ -13,17 +13,6 @@ export async function searchTracks(q, genre, artist) {
   return data;
 }
 
-export async function uploadTrack(formData, onProgress) {
-  const { data } = await axios.post(`${BASE_URL}/api/tracks`, formData, {
-    onUploadProgress(event) {
-      if (onProgress && event.total) {
-        onProgress(Math.round((event.loaded * 100) / event.total));
-      }
-    },
-  });
-  return data;
-}
-
 export async function bulkUploadTracks(formData, onProgress, onDone) {
   const token = localStorage.getItem('token');
   const response = await fetch(`${BASE_URL}/api/tracks/bulk`, {

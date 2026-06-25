@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { getAllTracks, bulkDeleteTracks } from '../api/tracks';
-import UploadForm from '../components/UploadForm';
+import { syncQdrant } from '../api/match';
 import BulkUploadForm from '../components/BulkUploadForm';
 import TrackTable from '../components/TrackTable';
 import EditTrackModal from '../components/EditTrackModal';
@@ -8,10 +8,12 @@ import EditTrackModal from '../components/EditTrackModal';
 export default function AdminPage() {
   const [tracks, setTracks] = useState([]);
   const [loadingTracks, setLoadingTracks] = useState(true);
-  const [uploadTab, setUploadTab] = useState('single');
   const [selectedIds, setSelectedIds] = useState(new Set());
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState('');
+  const [syncStatus, setSyncStatus] = useState('idle'); // idle | syncing | done | error
+  const [syncProgress, setSyncProgress] = useState(null);
+  const [syncResult, setSyncResult] = useState(null);
   const [activeTrackId, setActiveTrackId] = useState(null);
   const [editingTrack, setEditingTrack] = useState(null);
 
@@ -20,10 +22,6 @@ export default function AdminPage() {
       .then(setTracks)
       .finally(() => setLoadingTracks(false));
   }, []);
-
-  function handleSingleUploaded(newTrack) {
-    setTracks((prev) => [newTrack, ...prev]);
-  }
 
   function handleBulkUploaded(newTracks) {
     setTracks((prev) => [...newTracks, ...prev]);
@@ -51,6 +49,21 @@ export default function AdminPage() {
     });
   }
 
+  async function handleSyncQdrant() {
+    setSyncStatus('syncing');
+    setSyncProgress(null);
+    setSyncResult(null);
+    try {
+      await syncQdrant(
+        (data) => setSyncProgress(data),
+        (data) => { setSyncResult(data); setSyncStatus('done'); }
+      );
+    } catch (err) {
+      setSyncResult({ error: err.message });
+      setSyncStatus('error');
+    }
+  }
+
   async function handleBulkDelete() {
     if (selectedIds.size === 0) return;
     const confirmed = window.confirm(
@@ -76,30 +89,35 @@ export default function AdminPage() {
     <div className="page">
       <h1>Admin — Music Library</h1>
 
-      <div className="upload-tabs">
-        <button
-          className={`tab-btn ${uploadTab === 'single' ? 'tab-btn--active' : ''}`}
-          onClick={() => setUploadTab('single')}
-        >
-          Single Upload
-        </button>
-        <button
-          className={`tab-btn ${uploadTab === 'bulk' ? 'tab-btn--active' : ''}`}
-          onClick={() => setUploadTab('bulk')}
-        >
-          Bulk Upload
-        </button>
-      </div>
-
-      {uploadTab === 'single' ? (
-        <UploadForm onUploaded={handleSingleUploaded} />
-      ) : (
-        <BulkUploadForm onUploaded={handleBulkUploaded} />
-      )}
+      <BulkUploadForm onUploaded={handleBulkUploaded} />
 
       <section className="admin-library">
         <div className="library-header">
           <h2>Music Library ({tracks.length} tracks)</h2>
+          <div className="library-controls">
+            <button
+              className="btn btn-outline btn-small"
+              onClick={handleSyncQdrant}
+              disabled={syncStatus === 'syncing'}
+              title="Re-index all tracks into Qdrant for video matching"
+            >
+              {syncStatus === 'syncing'
+                ? syncProgress
+                  ? `Syncing ${syncProgress.index}/${syncProgress.total}...`
+                  : 'Syncing...'
+                : 'Sync to Qdrant'}
+            </button>
+            {syncStatus === 'done' && syncResult && (
+              <span className="success-count" style={{ fontSize: '13px' }}>
+                Synced {syncResult.synced}{syncResult.failed > 0 ? `, Failed ${syncResult.failed}` : ''}
+              </span>
+            )}
+            {syncStatus === 'error' && (
+              <span className="fail-count" style={{ fontSize: '13px' }}>
+                {syncResult?.error || 'Sync failed'}
+              </span>
+            )}
+          </div>
         </div>
 
         {selectedIds.size > 0 && (
