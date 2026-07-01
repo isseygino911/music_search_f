@@ -1,8 +1,17 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { getProfile, updateProfile, getDownloadHistory } from '../api/users';
+import { listMatchSessions, deleteMatchSession } from '../api/match';
 import TrackCard from '../components/TrackCard';
 
+function formatDate(dateString) {
+  return new Date(dateString).toLocaleDateString('en-US', {
+    year: 'numeric', month: 'short', day: 'numeric',
+  });
+}
+
 export default function ProfilePage() {
+  const navigate = useNavigate();
   const [profile, setProfile] = useState(null);
   const [downloads, setDownloads] = useState([]);
   const [pagination, setPagination] = useState(null);
@@ -13,14 +22,20 @@ export default function ProfilePage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
+  const [matchSessions, setMatchSessions] = useState([]);
+  const [deletingSessionId, setDeletingSessionId] = useState(null);
 
   useEffect(() => {
-    Promise.all([getProfile(), getDownloadHistory(1)])
-      .then(([profileData, historyData]) => {
+    Promise.all([
+      getProfile(),
+      getDownloadHistory(1),
+      listMatchSessions().catch(() => []),
+    ]).then(([profileData, historyData, sessions]) => {
         setProfile(profileData);
         setEditName(profileData.display_name || '');
         setDownloads(historyData.downloads);
         setPagination(historyData.pagination);
+        setMatchSessions(sessions);
       })
       .catch(() => setError('Failed to load profile'))
       .finally(() => setLoading(false));
@@ -47,10 +62,18 @@ export default function ProfilePage() {
     }
   }
 
-  function formatDate(dateString) {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric', month: 'long', day: 'numeric',
-    });
+  async function handleDeleteSession(e, sessionId) {
+    e.stopPropagation();
+    if (!window.confirm('Delete this match session? This will also remove the video from storage and any related editor projects.')) return;
+    setDeletingSessionId(sessionId);
+    try {
+      await deleteMatchSession(sessionId);
+      setMatchSessions((prev) => prev.filter((s) => s.id !== sessionId));
+    } catch {
+      alert('Failed to delete session. Please try again.');
+    } finally {
+      setDeletingSessionId(null);
+    }
   }
 
   if (loading) return <div className="page"><p className="loading">Loading...</p></div>;
@@ -104,6 +127,51 @@ export default function ProfilePage() {
         </div>
       </div>
 
+      {/* Match History */}
+      <section className="video-projects-history">
+        <h2>Match History</h2>
+        {matchSessions.length === 0 ? (
+          <p className="empty-state">
+            No past matches yet.{' '}
+            <button className="btn-link" onClick={() => navigate('/match')}>
+              Upload a video to find matching music →
+            </button>
+          </p>
+        ) : (
+          <div className="vp-list">
+            {matchSessions.map((s) => (
+              <div
+                key={s.id}
+                className="vp-card"
+                onClick={() => navigate(`/match/session/${s.id}`)}
+                style={{ cursor: 'pointer' }}
+              >
+                <div className="vp-card-icon">🎥</div>
+                <div className="vp-card-body">
+                  <div className="vp-card-title">Video Match</div>
+                  <div className="vp-card-meta">
+                    <span>{s.track_count} track{s.track_count !== 1 ? 's' : ''} matched</span>
+                    <span>{formatDate(s.created_at)}</span>
+                  </div>
+                </div>
+                <div className="vp-card-status" style={{ color: '#60b8ff' }}>
+                  View →
+                </div>
+                <button
+                  className="btn btn-small btn-danger"
+                  disabled={deletingSessionId === s.id}
+                  onClick={(e) => handleDeleteSession(e, s.id)}
+                  style={{ marginLeft: 8 }}
+                >
+                  {deletingSessionId === s.id ? '...' : 'Delete'}
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
+
+      {/* Download History */}
       <section className="download-history">
         <h2>Download History</h2>
 

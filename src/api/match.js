@@ -1,6 +1,18 @@
 import axios from 'axios';
 import { BASE_URL } from './config';
 
+export function deleteMatchSession(sessionId) {
+  return axios.delete(`${BASE_URL}/api/match/sessions/${sessionId}`).then((r) => r.data);
+}
+
+export function listMatchSessions() {
+  return axios.get(`${BASE_URL}/api/match/sessions`).then((r) => r.data);
+}
+
+export function getMatchSession(sessionId) {
+  return axios.get(`${BASE_URL}/api/match/sessions/${sessionId}`).then((r) => r.data);
+}
+
 export async function submitVideoForMatch(formData, onUploadProgress) {
   const { data } = await axios.post(`${BASE_URL}/api/match`, formData, {
     onUploadProgress(event) {

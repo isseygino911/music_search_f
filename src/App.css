@@ -797,6 +797,14 @@ body {
   margin-bottom: 16px;
 }
 
+.session-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
 .bulk-file-list {
   list-style: none;
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -1343,3 +1351,432 @@ body {
 }
 
 /* ── End Video Match ────────────────────────────────────────────────────── */
+
+/* ── Match result badges row ────────────────────────────────────────────── */
+.match-result-badges {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 2px;
+}
+
+.match-use-btn {
+  font-size: 11px;
+  padding: 3px 10px;
+}
+
+/* ── Match done layout (video + tracks side by side on wide screens) ─────── */
+.match-done-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* Video preview panel */
+.match-video-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.match-video-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.match-video-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.match-video-duration {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 8px;
+}
+
+.match-video-duration-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255,255,255,0.45);
+  white-space: nowrap;
+}
+
+.match-video-duration-bar {
+  flex: 1;
+  height: 6px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.match-video-duration-fill {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, #60b8ff, #c084fc);
+  border-radius: 3px;
+}
+
+.match-video-duration-time {
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  color: rgba(255,255,255,0.7);
+  white-space: nowrap;
+}
+
+/* Tracks section */
+.match-tracks-section {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.match-tracks-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.match-tracks-hint {
+  font-size: 13px;
+  font-weight: 400;
+  color: rgba(255,255,255,0.4);
+}
+
+/* ── Inline editor (embedded in match flow) ─────────────────────────────── */
+.inline-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 14px;
+}
+
+.inline-editor-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.inline-editor-track-info {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+}
+
+.inline-editor-label {
+  color: rgba(255,255,255,0.4);
+  font-size: 12px;
+}
+
+.inline-editor-artist {
+  color: rgba(255,255,255,0.5);
+}
+
+.inline-editor-meta {
+  display: flex;
+  gap: 20px;
+  font-size: 13px;
+  color: rgba(255,255,255,0.5);
+}
+
+.match-use-btn {
+  font-size: 11px;
+  padding: 3px 10px;
+}
+
+/* ── Video Editor Page ──────────────────────────────────────────────────── */
+.editor-page {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 24px 16px 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.editor-loading {
+  text-align: center;
+  color: rgba(255,255,255,0.5);
+  padding: 60px 0;
+  font-size: 15px;
+}
+
+.editor-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.editor-title {
+  flex: 1;
+}
+
+.editor-title h2 {
+  margin: 0 0 2px;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.editor-subtitle {
+  margin: 0;
+  font-size: 13px;
+  color: rgba(255,255,255,0.5);
+}
+
+/* Video preview */
+.editor-preview-wrap {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #000;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.editor-video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+/* Timeline bars container */
+.editor-timelines {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  padding: 20px 18px;
+}
+
+/* Individual timeline bar */
+.timeline-bar-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.timeline-bar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.timeline-bar-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255,255,255,0.5);
+}
+
+.timeline-bar-time {
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: rgba(255,255,255,0.7);
+}
+
+.timeline-bar-total {
+  color: rgba(255,255,255,0.35);
+}
+
+.timeline-bar-track {
+  position: relative;
+  height: 36px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 6px;
+  overflow: visible;
+  cursor: default;
+  user-select: none;
+}
+
+.timeline-bar-dim {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.45);
+  pointer-events: none;
+}
+
+.timeline-bar-active {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  pointer-events: none;
+}
+
+/* Drag handles */
+.timeline-handle {
+  position: absolute;
+  top: -4px;
+  bottom: -4px;
+  width: 10px;
+  border-radius: 4px;
+  cursor: ew-resize;
+  transform: translateX(-50%);
+  z-index: 10;
+  transition: opacity 0.15s;
+  box-shadow: 0 0 0 2px rgba(0,0,0,0.4);
+}
+
+.timeline-handle:hover {
+  opacity: 0.85;
+}
+
+/* Playhead cursor */
+.timeline-playhead {
+  position: absolute;
+  top: -6px;
+  bottom: -6px;
+  width: 2px;
+  background: #fff;
+  border-radius: 2px;
+  transform: translateX(-50%);
+  pointer-events: none;
+  z-index: 20;
+  box-shadow: 0 0 6px rgba(255,255,255,0.6);
+}
+
+/* Controls row */
+.editor-controls {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.editor-trim-summary {
+  display: flex;
+  gap: 20px;
+  font-size: 13px;
+  color: rgba(255,255,255,0.5);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Export section */
+.editor-export {
+  padding: 20px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+}
+
+.editor-render-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.editor-render-done {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.editor-render-success {
+  margin: 0;
+  font-size: 14px;
+  color: #4ade80;
+  font-weight: 500;
+}
+
+/* ── End Video Editor ───────────────────────────────────────────────────── */
+
+/* ── Profile: match history + video projects list ───────────────────────── */
+.video-projects-history {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.video-projects-history h2 {
+  margin: 0 0 4px;
+}
+
+.vp-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.vp-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  transition: background 0.15s, border-color 0.15s;
+  color: inherit;
+}
+
+.vp-card:hover {
+  background: rgba(255,255,255,0.07);
+  border-color: rgba(255,255,255,0.15);
+}
+
+.vp-card-icon {
+  font-size: 22px;
+  flex-shrink: 0;
+  width: 36px;
+  text-align: center;
+}
+
+.vp-card-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.vp-card-title {
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.vp-card-artist {
+  font-size: 12px;
+  color: rgba(255,255,255,0.5);
+}
+
+.vp-card-meta {
+  display: flex;
+  gap: 12px;
+  font-size: 12px;
+  color: rgba(255,255,255,0.4);
+  font-variant-numeric: tabular-nums;
+  flex-wrap: wrap;
+}
+
+.vp-card-status {
+  font-size: 12px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+/* ── End Profile History ────────────────────────────────────────────────── */

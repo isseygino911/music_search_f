@@ -9,6 +9,7 @@ import SearchPage from './pages/SearchPage';
 import AdminPage from './pages/AdminPage';
 import ProfilePage from './pages/ProfilePage';
 import MatchPage from './pages/MatchPage';
+import VideoEditorPage from './pages/VideoEditorPage';
 import './App.css';
 
 function Navbar() {
@@ -94,6 +95,14 @@ function AppRoutes() {
           <Route
             path="/match"
             element={<ProtectedRoute><MatchPage /></ProtectedRoute>}
+          />
+          <Route
+            path="/match/session/:sessionId"
+            element={<ProtectedRoute><MatchPage /></ProtectedRoute>}
+          />
+          <Route
+            path="/editor/:projectId"
+            element={<ProtectedRoute><VideoEditorPage /></ProtectedRoute>}
           />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
