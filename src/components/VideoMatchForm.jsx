@@ -3,7 +3,7 @@ import { submitVideoForMatch, streamMatchJob } from '../api/match';
 import TrackCard from './TrackCard';
 
 const ACCEPTED_TYPES = ['video/mp4', 'video/webm', 'video/quicktime', 'video/avi'];
-const MAX_SIZE_MB = 50;
+const MAX_SIZE_MB = 200;
 
 const STEPS = [
   'Uploading video to AI...',
