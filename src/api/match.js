@@ -12,6 +12,23 @@ export async function submitVideoForMatch(formData, onUploadProgress) {
   return data;
 }
 
+function parseSseLines(lines, onStep, onDone, onError) {
+  let eventType = null;
+  for (const line of lines) {
+    if (line.startsWith('event: ')) {
+      eventType = line.slice(7).trim();
+    } else if (line.startsWith('data: ')) {
+      try {
+        const data = JSON.parse(line.slice(6));
+        if (eventType === 'step' && onStep) onStep(data);
+        if (eventType === 'done' && onDone) onDone(data);
+        if (eventType === 'error' && onError) onError(data);
+      } catch {}
+      eventType = null;
+    }
+  }
+}
+
 export async function streamMatchJob(jobId, onStep, onDone, onError) {
   const token = localStorage.getItem('token');
   const response = await fetch(`${BASE_URL}/api/match/stream/${jobId}`, {
@@ -29,26 +46,14 @@ export async function streamMatchJob(jobId, onStep, onDone, onError) {
 
   while (true) {
     const { done, value } = await reader.read();
-    if (done) break;
+    if (done) {
+      if (buffer.trim()) parseSseLines(buffer.split('\n'), onStep, onDone, onError);
+      break;
+    }
     buffer += decoder.decode(value, { stream: true });
-
     const lines = buffer.split('\n');
     buffer = lines.pop();
-
-    let eventType = null;
-    for (const line of lines) {
-      if (line.startsWith('event: ')) {
-        eventType = line.slice(7).trim();
-      } else if (line.startsWith('data: ')) {
-        try {
-          const data = JSON.parse(line.slice(6));
-          if (eventType === 'step' && onStep) onStep(data);
-          if (eventType === 'done' && onDone) onDone(data);
-          if (eventType === 'error' && onError) onError(data);
-        } catch {}
-        eventType = null;
-      }
-    }
+    parseSseLines(lines, onStep, onDone, onError);
   }
 }
 
@@ -68,14 +73,7 @@ export async function syncQdrant(onProgress, onDone) {
   const decoder = new TextDecoder();
   let buffer = '';
 
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    buffer += decoder.decode(value, { stream: true });
-
-    const lines = buffer.split('\n');
-    buffer = lines.pop();
-
+  function processLines(lines) {
     let eventType = null;
     for (const line of lines) {
       if (line.startsWith('event: ')) {
@@ -89,5 +87,17 @@ export async function syncQdrant(onProgress, onDone) {
         eventType = null;
       }
     }
+  }
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) {
+      if (buffer.trim()) processLines(buffer.split('\n'));
+      break;
+    }
+    buffer += decoder.decode(value, { stream: true });
+    const lines = buffer.split('\n');
+    buffer = lines.pop();
+    processLines(lines);
   }
 }
